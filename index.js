@@ -84,7 +84,21 @@ bot.command("help", async ({ reply }) => {
   reply(MENU);
 });
 
-bot.hears(["mk", , "marica", "gonorrea", "chimba"], ({ reply }) => {
+bot.command("calcular", async (ctx) => {
+  const res = await coinbase.get("/exchange-rates");
+  const res2 = await coinbase.get("/exchange-rates?currency=BTC");
+  const trm = res.data.data.rates.COP;
+  const btc = res2.data.data.rates.USD;
+  const oficial = +trm * +btc;
+
+  const tasa = +ctx.message.text.slice(10, 18);
+  const tasaCompra_porc = Number((1 - tasa / oficial) * 100).toFixed(2);
+
+  ctx.reply(`Tasa Oficial BTC: ${formatter.format(Number(oficial).toFixed(2))}
+  \nTasa Compra: ${formatter.format(Number(tasa))} (-${tasaCompra_porc}%)`);
+});
+
+bot.hears(["mk", "marica", "gonorrea", "chimba"], ({ reply, from }) => {
   reply(`Hola ${from.username}. Por favor no digas groserías. Gracias`);
 });
 
